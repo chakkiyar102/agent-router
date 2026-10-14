@@ -148,7 +148,7 @@ describe("createDefaultRunDeps", () => {
       { readKeychain: () => undefined, collectorsForAccount: () => idleCollectors },
     );
     expect(deps.typesafeKeyHint).toBe(
-      'No TypeSafe API key found (checked keychain:model-router-typesafe and TYPESAFE_API_KEY). Store it once with: security add-generic-password -a "$USER" -s model-router-typesafe -w',
+      'No OpenRouter API key found (checked keychain:model-router-typesafe, OPENROUTER_API_KEY, TYPESAFE_API_KEY). Store it once with: security add-generic-password -a "$USER" -s model-router-typesafe -w',
     );
   });
 

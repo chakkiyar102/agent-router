@@ -188,20 +188,23 @@ export async function createDefaultRunDeps(
     }
   }
   // The configured reference (for example keychain:model-router-typesafe) works in every
-  // pane without exporting the key; TYPESAFE_API_KEY remains a fallback.
+  // pane without exporting the key; OPENROUTER_API_KEY, then TYPESAFE_API_KEY, are fallbacks.
+  // The key is an OpenRouter key: decisions go to Perplexity Decider, not Jev.
   const apiKeyRef = config.typesafe?.apiKeyRef;
   const apiKey =
     resolveCredential(apiKeyRef, env, overrides.readKeychain) ??
+    resolveEnvCredential("env:OPENROUTER_API_KEY", env) ??
     resolveEnvCredential("env:TYPESAFE_API_KEY", env);
   const createTypeSafe = overrides.createTypeSafeClient ?? createLiveTypeSafeClient;
   const client = apiKey ? createTypeSafe(apiKey) : unavailableTypeSafe();
   const checked = [
     ...(apiKeyRef && apiKeyRef !== "env:TYPESAFE_API_KEY" ? [apiKeyRef] : []),
+    "OPENROUTER_API_KEY",
     "TYPESAFE_API_KEY",
   ];
   const typesafeKeyHint = apiKey
     ? undefined
-    : `No TypeSafe API key found (checked ${checked.join(" and ")}). Store it once with: ` +
+    : `No OpenRouter API key found (checked ${checked.join(", ")}). Store it once with: ` +
       'security add-generic-password -a "$USER" -s model-router-typesafe -w';
   let herdr: HerdrClient | undefined;
   let herdrPane: HerdrPaneClient | undefined;

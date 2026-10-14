@@ -1,5 +1,4 @@
 import {
-  TypeSafeClient,
   type Questions,
   type SystemOneRequest,
   type SystemOneResult,
@@ -10,7 +9,7 @@ export interface TypeSafePort {
   systemOne<const Q extends Questions>(request: SystemOneRequest<Q>): Promise<SystemOneResult<Q>>;
 }
 
-export function createRecordingClient(inner: Pick<TypeSafeClient, "systemOne">): TypeSafePort {
+export function createRecordingClient(inner: Pick<TypeSafePort, "systemOne">): TypeSafePort {
   const calls: SystemOneRequest[] = [];
   return {
     calls,
@@ -22,8 +21,36 @@ export function createRecordingClient(inner: Pick<TypeSafeClient, "systemOne">):
   };
 }
 
+/** Decision model used for every route decision, served by OpenRouter's Decisions API. */
+export const DECIDER_MODEL = "perplexity/pplx-decider-v1.1-27b";
+const DECISIONS_URL = "https://openrouter.ai/api/alpha/decisions";
+
+/**
+ * Same `state` + `questions` contract as TypeSafe System One, so callers are unchanged.
+ * ponytail: no retries; a failed call surfaces as typesafe-unavailable like before.
+ */
+export function createOpenRouterDecider(
+  apiKey: string,
+  fetchImpl: typeof fetch = fetch,
+): Pick<TypeSafePort, "systemOne"> {
+  return {
+    async systemOne(request) {
+      const res = await fetchImpl(DECISIONS_URL, {
+        method: "POST",
+        headers: { Authorization: `Bearer ${apiKey}`, "Content-Type": "application/json" },
+        body: JSON.stringify({ ...request, model: DECIDER_MODEL }),
+        signal: AbortSignal.timeout(30_000),
+      });
+      if (!res.ok) {
+        throw new Error(`OpenRouter Decisions request failed with HTTP ${res.status}`);
+      }
+      return (await res.json()) as never;
+    },
+  };
+}
+
 export function createLiveTypeSafeClient(apiKey: string): TypeSafePort {
-  return createRecordingClient(new TypeSafeClient({ apiKey }));
+  return createRecordingClient(createOpenRouterDecider(apiKey));
 }
 
 const SENSITIVE_PATTERNS = [
