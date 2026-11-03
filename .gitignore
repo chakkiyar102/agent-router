@@ -10,3 +10,4 @@ coverage/
 .worktrees/
 .model-router/
 graphify-out/
+.vitest/
