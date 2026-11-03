@@ -31,6 +31,8 @@ export const ModelProfileSchema = z.object({
   relativeLatency: z.number().positive(),
   // The provider quota pool this model draws from; matches UsageWindow.pool.
   quotaPool: z.string().min(1).optional(),
+  // Quality tier for the router's tier rule; omitted means "standard".
+  tier: z.enum(["standard", "premium", "flagship"]).optional(),
 });
 
 export type ReasoningEffort = z.infer<typeof ReasoningEffortSchema>;

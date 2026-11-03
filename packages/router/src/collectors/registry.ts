@@ -49,6 +49,10 @@ export function collectorsForAccount(
     options.browserCollector ?? createBrowserDashboardCollector({ approvedBridge: false });
   return account.collectorPreference.flatMap((kind) => {
     if (kind === "official-cli" || kind === "official-api") {
+      // Command Code has no official usage collector; usage stays unknown.
+      if (account.agent === "command-code") {
+        return [];
+      }
       return [officialCollector(account, run)];
     }
     if (kind === "local-session") {

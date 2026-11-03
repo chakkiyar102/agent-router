@@ -7,6 +7,9 @@ export interface SemanticCandidate {
   modelId: string;
   supportedEfforts: readonly ReasoningEffort[];
   projectedRemainingRatio: number;
+  /** Relative cost per task from models.json; 1 is the baseline, lower is cheaper. */
+  relativeCost?: number;
+  tier?: "standard" | "premium" | "flagship";
   capabilities: {
     planning: number;
     coding: number;

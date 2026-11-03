@@ -31,6 +31,8 @@ export interface HerdrClient {
     timeoutMs?: number;
   }): Promise<CommandResult>;
   closePane(paneId: string): Promise<CommandResult>;
+  /** Types a line into a pane and presses Enter (`herdr pane run`). */
+  runInPane(paneId: string, line: string): Promise<CommandResult>;
 }
 
 export function createProcessCommandAdapter(
@@ -124,6 +126,9 @@ export function createHerdrClient(runCommand: RunCommand): HerdrClient {
     },
     closePane(paneId) {
       return runCommand(["herdr", "pane", "close", paneId]);
+    },
+    runInPane(paneId, line) {
+      return runCommand(["herdr", "pane", "run", paneId, line]);
     },
   };
 }

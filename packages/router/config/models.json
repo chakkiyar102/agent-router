@@ -7,7 +7,11 @@
       "provider": "cursor",
       "agent": "cursor",
       "launchName": "grok-4.6",
-      "supportedEfforts": ["low", "medium", "high"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high"
+      ],
       "capabilities": {
         "planning": 0.8,
         "coding": 0.8,
@@ -24,7 +28,9 @@
       "provider": "cursor",
       "agent": "cursor",
       "launchName": "cursor-grok-4.5-high",
-      "supportedEfforts": ["high"],
+      "supportedEfforts": [
+        "high"
+      ],
       "capabilities": {
         "planning": 0.75,
         "coding": 0.75,
@@ -41,7 +47,9 @@
       "provider": "cursor",
       "agent": "cursor",
       "launchName": "composer-2.5",
-      "supportedEfforts": ["none"],
+      "supportedEfforts": [
+        "none"
+      ],
       "capabilities": {
         "planning": 0.6,
         "coding": 0.75,
@@ -58,7 +66,11 @@
       "provider": "anthropic",
       "agent": "claude-code",
       "launchName": "sonnet",
-      "supportedEfforts": ["low", "medium", "high"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high"
+      ],
       "capabilities": {
         "planning": 0.8,
         "coding": 0.8,
@@ -73,24 +85,38 @@
       "id": "anthropic:claude-opus",
       "provider": "anthropic",
       "agent": "claude-code",
-      "launchName": "opus",
-      "supportedEfforts": ["low", "medium", "high", "xhigh", "max"],
+      "launchName": "claude-opus-5-5",
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
       "capabilities": {
-        "planning": 0.9,
-        "coding": 0.9,
-        "debugging": 0.9,
-        "creativity": 0.8,
-        "research": 0.85
+        "planning": 0.93,
+        "coding": 0.93,
+        "debugging": 0.93,
+        "creativity": 0.85,
+        "research": 0.9
       },
       "relativeQuotaCost": 3,
-      "relativeLatency": 1.5
+      "relativeLatency": 1.5,
+      "tier": "premium"
     },
     {
       "id": "openai:gpt-6-astra",
       "provider": "openai",
       "agent": "codex",
       "launchName": "gpt-6-astra",
-      "supportedEfforts": ["low", "medium", "high", "xhigh", "max", "ultra"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max",
+        "ultra"
+      ],
       "capabilities": {
         "planning": 0.9,
         "coding": 0.9,
@@ -106,7 +132,12 @@
       "provider": "openai",
       "agent": "codex",
       "launchName": "gpt-5.6-sol",
-      "supportedEfforts": ["low", "medium", "high", "ultra"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high",
+        "ultra"
+      ],
       "capabilities": {
         "planning": 0.85,
         "coding": 0.9,
@@ -122,7 +153,12 @@
       "provider": "openai",
       "agent": "codex",
       "launchName": "gpt-5.6-terra",
-      "supportedEfforts": ["low", "medium", "high", "ultra"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high",
+        "ultra"
+      ],
       "capabilities": {
         "planning": 0.8,
         "coding": 0.8,
@@ -138,7 +174,11 @@
       "provider": "openai",
       "agent": "codex",
       "launchName": "gpt-5.6-luna",
-      "supportedEfforts": ["low", "medium", "high"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high"
+      ],
       "capabilities": {
         "planning": 0.65,
         "coding": 0.7,
@@ -154,7 +194,11 @@
       "provider": "openai",
       "agent": "codex",
       "launchName": "gpt-5.5",
-      "supportedEfforts": ["low", "medium", "high"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high"
+      ],
       "capabilities": {
         "planning": 0.7,
         "coding": 0.75,
@@ -170,7 +214,11 @@
       "provider": "openai",
       "agent": "opencode",
       "launchName": "openai",
-      "supportedEfforts": ["low", "medium", "high"],
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high"
+      ],
       "capabilities": {
         "planning": 0.7,
         "coding": 0.75,
@@ -180,6 +228,128 @@
       },
       "relativeQuotaCost": 1,
       "relativeLatency": 1
+    },
+    {
+      "id": "command-code:gpt-6-astra",
+      "provider": "command-code",
+      "agent": "command-code",
+      "launchName": "gpt-6-astra",
+      "quotaPool": "command-code",
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "capabilities": {
+        "planning": 0.9,
+        "coding": 0.9,
+        "debugging": 0.9,
+        "creativity": 0.8,
+        "research": 0.9
+      },
+      "relativeQuotaCost": 3,
+      "relativeLatency": 1.5
+    },
+    {
+      "id": "command-code:kimi-k3.1-pro",
+      "provider": "command-code",
+      "agent": "command-code",
+      "launchName": "moonshotai/kimi-k3.1-pro",
+      "quotaPool": "command-code",
+      "supportedEfforts": [
+        "none"
+      ],
+      "capabilities": {
+        "planning": 0.8,
+        "coding": 0.85,
+        "debugging": 0.8,
+        "creativity": 0.7,
+        "research": 0.75
+      },
+      "relativeQuotaCost": 0.6,
+      "relativeLatency": 1.2
+    },
+    {
+      "id": "command-code:deepseek-v4-pro",
+      "provider": "command-code",
+      "agent": "command-code",
+      "launchName": "deepseek/deepseek-v4-pro",
+      "quotaPool": "command-code",
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high"
+      ],
+      "capabilities": {
+        "planning": 0.8,
+        "coding": 0.8,
+        "debugging": 0.8,
+        "creativity": 0.65,
+        "research": 0.75
+      },
+      "relativeQuotaCost": 0.4,
+      "relativeLatency": 1.2
+    },
+    {
+      "id": "command-code:glm-5.3",
+      "provider": "command-code",
+      "agent": "command-code",
+      "launchName": "zai-org/glm-5.3",
+      "quotaPool": "command-code",
+      "supportedEfforts": [
+        "none"
+      ],
+      "capabilities": {
+        "planning": 0.8,
+        "coding": 0.85,
+        "debugging": 0.8,
+        "creativity": 0.65,
+        "research": 0.75
+      },
+      "relativeQuotaCost": 0.5,
+      "relativeLatency": 1.1
+    },
+    {
+      "id": "command-code:deepseek-v4.1-flash",
+      "provider": "command-code",
+      "agent": "command-code",
+      "launchName": "deepseek/deepseek-v4.1-flash",
+      "quotaPool": "command-code",
+      "supportedEfforts": [
+        "none"
+      ],
+      "capabilities": {
+        "planning": 0.62,
+        "coding": 0.72,
+        "debugging": 0.67,
+        "creativity": 0.55,
+        "research": 0.58
+      },
+      "relativeQuotaCost": 0.15,
+      "relativeLatency": 0.5
+    },
+    {
+      "id": "anthropic:claude-fable",
+      "provider": "anthropic",
+      "agent": "claude-code",
+      "launchName": "claude-fable-5-1",
+      "tier": "flagship",
+      "supportedEfforts": [
+        "low",
+        "medium",
+        "high",
+        "xhigh",
+        "max"
+      ],
+      "capabilities": {
+        "planning": 0.97,
+        "coding": 0.96,
+        "debugging": 0.97,
+        "creativity": 0.92,
+        "research": 0.96
+      },
+      "relativeQuotaCost": 6,
+      "relativeLatency": 2
     }
   ]
 }

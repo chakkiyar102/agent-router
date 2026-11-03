@@ -337,6 +337,8 @@ export async function executeRun(
       modelId: item.model.id,
       supportedEfforts: item.model.supportedEfforts,
       projectedRemainingRatio: item.projectedRemainingRatio,
+      relativeCost: item.model.relativeQuotaCost,
+      ...(item.model.tier === undefined ? {} : { tier: item.model.tier }),
       capabilities: item.model.capabilities,
     })),
     // A route whose launch failed must be re-ranked, never reused as sticky.

@@ -1,8 +1,16 @@
 import { createHash, randomBytes } from "node:crypto";
+import { mkdtempSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { redactCollectorText } from "../collectors/normalizer.js";
 import type { AgentId } from "../domain/ids.js";
 import type { ReasoningEffort } from "../domain/model-profile.js";
-import { buildAgentCommand, herdrAgentKind } from "./agent-command.js";
+import {
+  buildAgentCommand,
+  herdrAgentKind,
+  isHerdrNativeAgent,
+  shellQuote,
+} from "./agent-command.js";
 import { createHerdrClient, type HerdrClient } from "./herdr-client.js";
 import { isHerdrEnv } from "./readiness.js";
 
@@ -51,7 +59,8 @@ export function herdrError(result: { stdout: string; stderr: string }, action: s
 // Deriving the name from the launch token keeps each launch distinct and lets a retry reuse it.
 export function herdrAgentName(agent: AgentId, launchToken: string): string {
   const suffix = createHash("sha256").update(launchToken).digest("hex").slice(0, 6);
-  return `router-${herdrAgentKind(agent)}-${suffix}`;
+  const label = isHerdrNativeAgent(agent) ? herdrAgentKind(agent) : "cmd";
+  return `router-${label}-${suffix}`;
 }
 
 const HANDOFF_TIMEOUT_MS = 30_000;
@@ -117,6 +126,10 @@ export async function launchRoutedAgent(input: {
       return { ok: false, error: "herdr pane split did not return a pane id", launchToken };
     }
     paneCreated = true;
+  }
+  if (!isHerdrNativeAgent(input.agent)) {
+    return launchUntrackedAgent({ herdr, command, handoff: input.handoff, paneId, paneCreated,
+      existingPane: input.existingPaneId !== undefined, launchToken, printed });
   }
   if (!input.existingPaneId) {
     const started = await herdr.startAgent({
@@ -187,4 +200,52 @@ export async function launchRoutedAgent(input: {
     };
   }
   return { ok: true, paneCreated, printed, launchToken, paneId, agentName };
+}
+
+/**
+ * Launches an agent Herdr cannot start natively (Command Code). The pane runs the agent's
+ * command line directly with the handoff as its first message, so Herdr does not track the
+ * agent's working/idle state. The handoff travels through a private temp file that is read
+ * and deleted by the same command line, which keeps it out of shell quoting and history.
+ */
+async function launchUntrackedAgent(input: {
+  herdr: HerdrClient;
+  command: string[];
+  handoff: string;
+  paneId: string;
+  paneCreated: boolean;
+  existingPane: boolean;
+  launchToken: string;
+  printed: string;
+}): Promise<LaunchResult> {
+  const { herdr, paneId, paneCreated, launchToken, printed } = input;
+  const fail = async (error: string): Promise<LaunchResult> => {
+    if (paneCreated) {
+      await herdr.closePane(paneId);
+      return { ok: false, error, launchToken, paneCreated: false };
+    }
+    return { ok: false, error, launchToken, paneId, paneCreated };
+  };
+  if (input.existingPane) {
+    // The agent is already running in this pane; type the handoff as the next message.
+    const sent = await herdr.runInPane(paneId, input.handoff.replace(/\s*\n\s*/g, " "));
+    return sent.ok
+      ? { ok: true, paneCreated, printed, launchToken, paneId }
+      : fail(herdrError(sent, "herdr pane run failed"));
+  }
+  let handoffFile: string;
+  try {
+    const dir = mkdtempSync(join(tmpdir(), "router-handoff-"));
+    handoffFile = join(dir, "task.md");
+    writeFileSync(handoffFile, input.handoff, { mode: 0o600 });
+  } catch (error) {
+    return fail(`could not write handoff file: ${String(error)}`);
+  }
+  const quotedFile = shellQuote(handoffFile);
+  const line = `${input.command.map(shellQuote).join(" ")} "$(cat ${quotedFile}; rm -f ${quotedFile})"`;
+  const ran = await herdr.runInPane(paneId, line);
+  if (!ran.ok) {
+    return fail(herdrError(ran, "herdr pane run failed"));
+  }
+  return { ok: true, paneCreated, printed, launchToken, paneId };
 }
